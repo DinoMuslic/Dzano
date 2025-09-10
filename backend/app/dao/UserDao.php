@@ -152,6 +152,18 @@ class UserDao{
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getBalance($userId) {
+        $stmt = $this->conn->prepare("SELECT balance FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetchColumn();
+      }
+
+    public function increaseBalance($userId, $amount) {
+        $stmt = $this->conn->prepare("UPDATE users SET balance = balance + ? WHERE id = ?");
+        return $stmt->execute([$amount, $userId]);
+      }
+
+
 
 
   

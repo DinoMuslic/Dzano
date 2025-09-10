@@ -70,6 +70,15 @@ class UserService
          return $this->dao;
     }
 
+    public function getBalance($userId) {
+        return $this->dao->getBalance($userId);
+    }
+
+    public function increaseBalance($userId, $amount) {
+        return $this->dao->increaseBalance($userId, $amount);
+    }
+
+
 
 
     
