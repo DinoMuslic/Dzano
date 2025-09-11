@@ -342,3 +342,11 @@ Flight::route('POST /top-up', function () {
         Flight::json(["error" => "Invalid or expired token: " . $e->getMessage()], 401);
     }
 });
+
+Flight::route('PUT /users/@id/phone', function($id) {
+    $data = Flight::request()->data->getData();
+    $service = Flight::get('user_service');
+    $service->update_phone($id, $data['phone_number']);
+    Flight::json(['message' => 'Phone updated']);
+});
+

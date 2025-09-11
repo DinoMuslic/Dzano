@@ -78,6 +78,11 @@ class UserService
         return $this->dao->increaseBalance($userId, $amount);
     }
 
+    public function update_phone($id, $phone_number) {
+        return $this->dao->update_phone($id, $phone_number);
+    }
+
+
 
 
 
