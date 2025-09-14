@@ -263,3 +263,8 @@ Flight::route('POST /gigs/@gig_id/pay/@freelancer_id', function ($gig_id, $freel
     }
 });
 
+Flight::route('POST /gigs/@gig_id/reject/@user_id', function($gig_id, $user_id) {
+    $service = Flight::get('gig_service');
+    $service->reject_application($gig_id, $user_id);
+    Flight::json(["message" => "Application rejected."]);
+});
