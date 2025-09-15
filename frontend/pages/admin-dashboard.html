@@ -36,9 +36,7 @@
 
 <script>
   $(document).ready(function () {
-    const user = Utils.get_from_localstorage("user");
-    if(user["isAdmin"] != 1) window.location = "#home";
-    // First load DataTables
+
     $.when(
       $.getScript("https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"),
       $.getScript("https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js")
