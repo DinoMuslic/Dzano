@@ -75,7 +75,6 @@ function loadUserProfile(userId) {
   });
 }
 
-// Enable inline bio editing
 function enableBioEdit(currentBio, userId) {
   $("#bio-display").replaceWith(`
     <div id="bio-edit">
@@ -84,10 +83,9 @@ function enableBioEdit(currentBio, userId) {
       <button class="btn btn-sm btn-secondary" onclick="location.reload()">Cancel</button>
     </div>
   `);
-  $("#bio-controls").remove(); // Remove the "Change Bio" button
+  $("#bio-controls").remove(); 
 }
 
-// Save bio update
 function saveBio(userId) {
   const newBio = $("#bio-input").val();
   $.ajax({
@@ -105,7 +103,6 @@ function saveBio(userId) {
   });
 }
 
-// Gig editing
 function openEditGigModal(id, title, price, status) {
   $("#edit-gig-id").val(id);
   $("#edit-gig-title").val(title);
@@ -270,16 +267,20 @@ function payFreelancer(gigId, userId) {
         });
       });
 
+      $('#cryptoPayBtn').off('click').on('click', function () {
+        handleCryptoPayment();
+      });
+
       loadPayPalSdk(() => {
         renderPayPalButton();
       });
-
     },
     error: function () {
       toastr.error("Failed to load gig data.");
     }
   });
 }
+
 
 
 
@@ -390,9 +391,18 @@ loadFavorites((currentUser.id));
 
 
 function renderPayPalButton() {
-  $("#paypal-button-container").html(""); // clear old button
+  const container = document.getElementById("paypal-button-container");
+  container.innerHTML = "";  
 
-  paypal.Buttons({
+  if (window.paypalButtonsInstance) {
+    try {
+      window.paypalButtonsInstance.close(); 
+    } catch (e) {
+      console.warn("No previous PayPal instance to close.");
+    }
+  }
+
+  window.paypalButtonsInstance = paypal.Buttons({
     createOrder: function (data, actions) {
       return actions.order.create({
         purchase_units: [{
@@ -403,11 +413,11 @@ function renderPayPalButton() {
       });
     },
     onApprove: function (data, actions) {
-      console.log("Order approved. Capturing now...", data);
+      console.log("⚡ Order approved. Capturing now...", data);
 
       return actions.order.capture().then(function (details) {
-        console.log("Capture successful:", details);
-        toastr.success('Payment completed via PayPal');
+        console.log("✅ Capture successful:", details);
+        toastr.success("Payment completed via PayPal");
 
         const currentUser = JSON.parse(localStorage.getItem("user"));
 
@@ -423,8 +433,7 @@ function renderPayPalButton() {
           }),
           success: function () {
             toastr.success("PayPal payment registered in system!");
-            const modal = bootstrap.Modal.getInstance(document.getElementById('payModal'));
-            modal.hide();
+            bootstrap.Modal.getInstance(document.getElementById('payModal')).hide();
             location.reload();
           },
           error: function () {
@@ -432,12 +441,19 @@ function renderPayPalButton() {
           }
         });
       }).catch(function (err) {
-        console.error("Capture failed:", err);
-        toastr.error("PayPal capture failed. Please check sandbox account setup.");
+        console.error("❌ Capture failed:", err);
+        toastr.error("PayPal capture failed. Please check sandbox login.");
       });
+    },
+    onError: function (err) {
+      console.error("❌ PayPal Button Error:", err);
+      toastr.error("Error with PayPal button.");
     }
-  }).render('#paypal-button-container');
+  });
+
+  window.paypalButtonsInstance.render('#paypal-button-container');
 }
+
 
 
 
@@ -475,6 +491,75 @@ function rejectApplicant(gigId, userId) {
     },
     error: function (xhr) {
       toastr.error("Failed to reject: " + xhr.responseText);
+    }
+  });
+}
+
+
+function simulateCryptoWebhook(paymentData) {
+  $.ajax({
+    url: `${API_BASE}/crypto/webhook`,
+    method: "POST",
+    contentType: "application/json",
+    headers: {
+      "X_CC_WEBHOOK_SIGNATURE": "fake_signature"
+    },
+    data: JSON.stringify({
+      event: {
+        type: "charge:confirmed",
+        data: {
+          metadata: {
+            sender_id: paymentData.sender_id,
+            receiver_id: paymentData.receiver_id,
+            gig_id: paymentData.gig_id
+          },
+          pricing: {
+            local: {
+              amount: paymentData.amount
+            }
+          }
+        }
+      }
+    }),
+    success: function () {
+      toastr.success("Simulated crypto payment completed!");
+      const modal = bootstrap.Modal.getInstance(document.getElementById('payModal'));
+      modal.hide();
+      location.reload();
+    },
+    error: function () {
+      toastr.error("Simulated crypto webhook failed.");
+    }
+  });
+}
+
+function handleCryptoPayment() {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  const paymentData = {
+    amount: selectedPrice,
+    gig_id: selectedGigId,
+    sender_id: currentUser.id,
+    receiver_id: selectedUserId
+  };
+
+  $.ajax({
+    url: `${API_BASE}/crypto/create-payment`,
+    method: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(paymentData),
+    success: function (res) {
+      const popup = window.open(res.payment_url, "_blank");
+
+      const timer = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(timer);
+          simulateCryptoWebhook(paymentData);
+        }
+      }, 500);
+    },
+    error: function () {
+      toastr.error("Failed to initiate crypto payment.");
     }
   });
 }
