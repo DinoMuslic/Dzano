@@ -17,10 +17,12 @@ function loadUserProfile(userId) {
         `;
       }
 
+      // First render the static profile info
       $("#user-info").html(`
         <p><strong>Name:</strong> ${user.first_name} ${user.last_name}</p>
         <p><strong>Email:</strong> ${user.email}</p>
         <p><strong>Phone:</strong> <span id="phone-display">${user.phone_number || "Not provided"}</span></p>
+        <div id="userRating"><span class="text-muted">Loading rating...</span></div>
         <p><strong>Balance:</strong> $<span id="userBalance">0.00</span></p>
         ${bioHtml}
         <div id="bio-controls">${bioControls}</div>
@@ -29,9 +31,29 @@ function loadUserProfile(userId) {
         ` : ""}
       `);
 
+      // ✅ Fetch and display user rating summary safely
+      $.ajax({
+        url: `${API_BASE}/reviews/summary/${user.id}`,
+        method: "GET",
+        success: function (summary) {
+          const avg = summary && summary.average_rating ? parseFloat(summary.average_rating) : null;
+          const total = summary && summary.total_reviews ? summary.total_reviews : 0;
+
+          if (avg !== null && !isNaN(avg) && total > 0) {
+            $("#userRating").html(`
+              <p><strong>Rating:</strong> ⭐ ${avg.toFixed(1)} 
+              (${total} review${total !== 1 ? "s" : ""})</p>
+            `);
+          } else {
+            $("#userRating").html(`<p><strong>Rating:</strong> ⭐ N/A (no reviews yet)</p>`);
+          }
+        },
+        error: function () {
+          $("#userRating").html(`<p><strong>Rating:</strong> ⭐ N/A</p>`);
+        }
+      });
 
       loadUserBalance(user.id);
-
 
       if (!gigs.length) {
         $("#user-gigs").html(`<p class="text-muted">No gigs created by this user.</p>`);
@@ -76,8 +98,6 @@ function loadUserProfile(userId) {
           setTimeout(() => loadApplicationsForGig(gig.id, $(`#applications-${gig.id}`)), 0);
         }
 
-
-
         html += `</div></div></div>`;
         return html;
       }).join("");
@@ -89,6 +109,7 @@ function loadUserProfile(userId) {
     }
   });
 }
+
 
 function enableBioEdit(currentBio, userId) {
   $("#bio-display").replaceWith(`
@@ -190,42 +211,73 @@ function loadApplicationsForGig(gigId, container) {
         return;
       }
 
-      const list = applications.map(app => `
-        <li class="list-group-item application-entry"
-            data-message="${escapeHtml(app.application_message || "No message")}"
-            data-cv="${app.application_cv || ''}">
+      // Fetch rating summaries for all applicants in parallel
+      const ratingRequests = applications.map(app => {
+        return $.ajax({
+          url: `${API_BASE}/reviews/summary/${app.user_id}`,
+          method: "GET"
+        }).then(summary => ({
+          userId: app.user_id,
+          summary: summary
+        })).catch(() => ({
+          userId: app.user_id,
+          summary: { average_rating: null, total_reviews: 0 }
+        }));
+      });
 
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <strong>${app.user_first_name} ${app.user_last_name}</strong> (${app.user_email})
-              <div class="text-muted small">Applied on ${new Date(app.applied_at).toLocaleDateString()}</div>
-            </div>
-            <div>
-              <span class="badge bg-${getStatusBadgeClass(app.status)}">${app.status}</span>
-              ${app.status === "approved" && app.paid === 1 ? `<span class="badge bg-success ms-2">Paid</span>` : ""}
-            </div>
-          </div>
+      Promise.all(ratingRequests).then(results => {
+        const ratingMap = {};
+        results.forEach(r => {
+          ratingMap[r.userId] = r.summary;
+        });
 
-          <div class="mt-2">
-            ${app.status === "pending" ? `
-              <button class="btn btn-sm btn-primary me-2" onclick="event.stopPropagation(); approveApplicant(${gigId}, ${app.user_id})">Approve</button>
-              <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); rejectApplicant(${gigId}, ${app.user_id})">Reject</button>
-            ` : ""}
+        const list = applications.map(app => {
+          const summary = ratingMap[app.user_id] || {};
+          const avg = (summary && summary.average_rating) ? parseFloat(summary.average_rating).toFixed(1) : "N/A";
+          const total = summary.total_reviews || 0;
 
-            ${app.status === "approved" && app.paid !== 1 ? `
-              <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); payFreelancer(${gigId}, ${app.user_id})">Pay</button>
-            ` : ""}
-          </div>
-        </li>
-      `).join("");
+          return `
+            <li class="list-group-item application-entry"
+                data-message="${escapeHtml(app.application_message || "No message")}"
+                data-cv="${app.application_cv || ''}">
 
-      $(container).html(`<ul class="list-group">${list}</ul>`);
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <strong>${app.user_first_name} ${app.user_last_name}</strong> (${app.user_email})
+                  <div class="text-muted small">Applied on ${new Date(app.applied_at).toLocaleDateString()}</div>
+                  <div class="text-warning small">
+                    ⭐ ${avg} (${total} review${total !== 1 ? "s" : ""})
+                  </div>
+                </div>
+                <div>
+                  <span class="badge bg-${getStatusBadgeClass(app.status)}">${app.status}</span>
+                  ${app.status === "approved" && app.paid === 1 ? `<span class="badge bg-success ms-2">Paid</span>` : ""}
+                </div>
+              </div>
+
+              <div class="mt-2">
+                ${app.status === "pending" ? `
+                  <button class="btn btn-sm btn-primary me-2" onclick="event.stopPropagation(); approveApplicant(${gigId}, ${app.user_id})">Approve</button>
+                  <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); rejectApplicant(${gigId}, ${app.user_id})">Reject</button>
+                ` : ""}
+
+                ${app.status === "approved" && app.paid !== 1 ? `
+                  <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); payFreelancer(${gigId}, ${app.user_id})">Pay</button>
+                ` : ""}
+              </div>
+            </li>
+          `;
+        }).join("");
+
+        $(container).html(`<ul class="list-group">${list}</ul>`);
+      });
     },
     error: function () {
       toastr.error("Failed to load applications.");
     }
   });
 }
+
 
 
 
@@ -261,6 +313,13 @@ let selectedGigId = null;
 let selectedUserId = null;
 let selectedPrice = null;
 
+function promptReview(gigId, reviewedUserId) {
+  $('#reviewGigId').val(gigId);
+  $('#reviewedUserId').val(reviewedUserId);
+  $('#ratingModal').modal('show');
+}
+
+
 function payFreelancer(gigId, userId) {
   selectedGigId = gigId;
   selectedUserId = userId;
@@ -288,8 +347,9 @@ function payFreelancer(gigId, userId) {
           success: function () {
             toastr.success("Payment successful!");
             payModal.hide();
-            location.reload();
-          },
+            promptReview(gigId, userId); // <-- ask for review
+          }
+          ,
           error: function (xhr) {
             toastr.error("Payment failed: " + xhr.responseText);
           }
@@ -509,7 +569,7 @@ function renderPayPalButton() {
           toastr.success("PayPal payment registered in system!");
           const modal = bootstrap.Modal.getInstance(document.getElementById('payModal'));
           modal.hide();
-          location.reload();
+          promptReview(selectedGigId, selectedUserId);
         },
         error: function () {
           toastr.error("Failed to register PayPal payment.");
@@ -595,7 +655,7 @@ function simulateCryptoWebhook(paymentData) {
       toastr.success("Simulated crypto payment completed!");
       const modal = bootstrap.Modal.getInstance(document.getElementById('payModal'));
       modal.hide();
-      location.reload();
+      promptReview(paymentData.gig_id, paymentData.receiver_id);
     },
     error: function () {
       toastr.error("Simulated crypto webhook failed.");
@@ -633,3 +693,34 @@ function handleCryptoPayment() {
     }
   });
 }
+
+
+$('#reviewForm').on('submit', function (e) {
+  e.preventDefault();
+  const token = localStorage.getItem("jwt")?.replace(/"/g, "");
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  const data = {
+    reviewer_id: currentUser.id,
+    reviewed_id: $('#reviewedUserId').val(),
+    gig_id: $('#reviewGigId').val(),
+    rating: parseInt($('#rating').val()),
+    review_comment: $('#reviewComment').val()
+  };
+
+  $.ajax({
+    url: `${API_BASE}/reviews`,
+    method: "POST",
+    contentType: "application/json",
+    headers: { Authorization: `Bearer ${token}` },
+    data: JSON.stringify(data),
+    success: function () {
+      toastr.success("Review submitted!");
+      $('#ratingModal').modal('hide');
+      location.reload();
+    },
+    error: function (xhr) {
+      toastr.error("Failed to submit review: " + (xhr.responseJSON?.error || "Unknown error"));
+    }
+  });
+});

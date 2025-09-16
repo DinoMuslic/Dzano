@@ -134,5 +134,40 @@
   const API_BASE = "http://localhost/BalkanFreelance/backend";
 </script>
 
+
+<!-- Review Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content shadow">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ratingModalLabel">Rate the Freelancer</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="reviewForm">
+          <div class="mb-3">
+            <label for="rating" class="form-label">Rating (1 to 5)</label>
+            <select class="form-select" id="rating" required>
+              <option value="">Select rating</option>
+              <option value="1">★☆☆☆☆</option>
+              <option value="2">★★☆☆☆</option>
+              <option value="3">★★★☆☆</option>
+              <option value="4">★★★★☆</option>
+              <option value="5">★★★★★</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="reviewComment" class="form-label">Comment (optional)</label>
+            <textarea class="form-control" id="reviewComment" rows="3"></textarea>
+          </div>
+          <input type="hidden" id="reviewedUserId">
+          <input type="hidden" id="reviewGigId">
+          <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body> 
 </html>

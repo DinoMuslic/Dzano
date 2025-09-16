@@ -10,7 +10,7 @@ require __DIR__ . '/app/routes/BlogRoutes.php';
 require __DIR__ . '/app/routes/FavoriteRoutes.php';
 require __DIR__ . '/app/routes/PaymentRoutes.php';
 require __DIR__ . '/app/routes/CryptoRoutes.php';
-
+require __DIR__ . '/app/routes/ReviewRoutes.php';
 
 //require __DIR__ . '/app/services/UserService.php';
 
