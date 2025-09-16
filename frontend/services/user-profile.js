@@ -191,27 +191,30 @@ function loadApplicationsForGig(gigId, container) {
       }
 
       const list = applications.map(app => `
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>${app.user_first_name} ${app.user_last_name}</strong> (${app.user_email})
-            <div class="text-muted small">Applied on ${new Date(app.created_at).toLocaleDateString()}</div>
+        <li class="list-group-item application-entry"
+            data-message="${escapeHtml(app.application_message || "No message")}"
+            data-cv="${app.application_cv || ''}">
+
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <strong>${app.user_first_name} ${app.user_last_name}</strong> (${app.user_email})
+              <div class="text-muted small">Applied on ${new Date(app.applied_at).toLocaleDateString()}</div>
+            </div>
+            <div>
+              <span class="badge bg-${getStatusBadgeClass(app.status)}">${app.status}</span>
+              ${app.status === "approved" && app.paid === 1 ? `<span class="badge bg-success ms-2">Paid</span>` : ""}
+            </div>
           </div>
-          <div>
-            <span class="badge bg-${getStatusBadgeClass(app.status)}">${app.status}</span>
 
-            ${app.status === "pending" ? 
-              `
-              <button class="btn btn-sm btn-primary ms-2" onclick="approveApplicant(${gigId}, ${app.user_id})">Approve</button>
-              <button class="btn btn-sm btn-outline-danger ms-2" onclick="rejectApplicant(${gigId}, ${app.user_id})">Reject</button>
-              `
-              : ""}
+          <div class="mt-2">
+            ${app.status === "pending" ? `
+              <button class="btn btn-sm btn-primary me-2" onclick="event.stopPropagation(); approveApplicant(${gigId}, ${app.user_id})">Approve</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); rejectApplicant(${gigId}, ${app.user_id})">Reject</button>
+            ` : ""}
 
-
-            ${app.status === "approved" ? 
-              (app.paid === 1 
-                ? `<span class="badge bg-success ms-2">Paid</span>` 
-                : `<button class="btn btn-sm btn-success ms-2" onclick="payFreelancer(${gigId}, ${app.user_id})">Pay</button>`)
-              : ""}
+            ${app.status === "approved" && app.paid !== 1 ? `
+              <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); payFreelancer(${gigId}, ${app.user_id})">Pay</button>
+            ` : ""}
           </div>
         </li>
       `).join("");
@@ -224,6 +227,17 @@ function loadApplicationsForGig(gigId, container) {
   });
 }
 
+
+
+// Make application row clickable unless user clicks an internal button
+$(document).on('click', '.application-entry', function (e) {
+  if ($(e.target).is('button')) return; // prevent click if a button was clicked
+
+  const message = $(this).data("message");
+  const cv = $(this).data("cv");
+
+  viewApplication(message, cv);
+});
 
 
 
@@ -414,6 +428,40 @@ function removeFavorite(userId, gigId) {
 }
 
 loadFavorites((currentUser.id));
+
+
+
+function viewApplication(message, cvUrl) {
+  $("#applicationMessage").text(message || "No message");
+
+  if (cvUrl) {
+    // Just strip the backend/ part if it's mistakenly included
+    const cleanedUrl = cvUrl.replace(/^\/?backend\/?/, '').replace(/^\/+/, '');
+    const cvDownloadUrl = `/` + cleanedUrl; // Relative to project root
+
+    $("#applicationCv").html(
+      `<a href="${cvDownloadUrl}" target="_blank" download class="btn btn-outline-primary">Download CV</a>`
+    );
+  } else {
+    $("#applicationCv").html(`<span class="text-muted">No CV uploaded</span>`);
+  }
+
+  const modal = new bootstrap.Modal(document.getElementById("viewApplicationModal"));
+  modal.show();
+}
+
+
+// helper for XSS safety
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
 
 
 function renderPayPalButton() {

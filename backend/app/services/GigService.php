@@ -67,9 +67,10 @@ Class GigService
         }
 
 
-    public function apply_to_gig($gig_id, $user_id, $cover_letter) {
-        return $this->dao->apply_to_gig($gig_id, $user_id, $cover_letter);
+   public function apply_to_gig($gig_id, $user_id, $message, $cv_filename = null) {
+        return $this->dao->apply_to_gig($gig_id, $user_id, $message, $cv_filename);
     }
+
 
     public function get_applications_for_gig($gig_id) {
         return $this->dao->get_applications_for_gig($gig_id);

@@ -69,6 +69,26 @@
   </div>
 </div>
 
+<!-- View Application Modal -->
+<div class="modal fade" id="viewApplicationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Application Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Message:</strong></p>
+        <p id="applicationMessage" class="border p-2 bg-light rounded"></p>
+
+        <p class="mt-3"><strong>CV:</strong></p>
+        <div id="applicationCv"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <style>
   .modal-lg {
     max-width: 700px;
@@ -88,6 +108,16 @@
   #paypal-button-container iframe {
     transition: all 0.3s ease-in-out;
   }
+
+  .application-entry {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.application-entry:hover {
+  background-color: #f8f9fa;
+}
+
 </style>
 
 
