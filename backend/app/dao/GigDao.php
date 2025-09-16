@@ -307,6 +307,15 @@ Class GigDao{
         ]);
     }
 
+    public function is_gig_locked($gig_id) {
+        $sql = "SELECT COUNT(*) FROM applications 
+                WHERE gig_id = :gig_id AND status = 'approved' AND paid = 0";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':gig_id' => $gig_id]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+
       
 
         public function insert($table, $entity)

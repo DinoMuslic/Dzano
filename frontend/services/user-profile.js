@@ -50,17 +50,32 @@ function loadUserProfile(userId) {
         `;
 
         if (currentUser && parseInt(currentUser.id) === parseInt(gig.user_id)) {
+          if (gig.is_locked) {
+            html += `
+              <div class="mt-2 mb-2">
+                <button class="btn btn-sm btn-warning me-2" disabled>Edit</button>
+                <button class="btn btn-sm btn-danger" disabled>Delete</button>
+                <div class="text-muted small">Locked: Freelancer approved but not paid yet</div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="mt-2 mb-2">
+                <button class="btn btn-sm btn-warning me-2" onclick="openEditGigModal(${gig.id}, '${gig.title}', ${gig.price}, '${gig.status}')">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteGig(${gig.id})">Delete</button>
+              </div>
+            `;
+          }
+
           html += `
-            <div class="mt-2 mb-2">
-              <button class="btn btn-sm btn-warning me-2" onclick="openEditGigModal(${gig.id}, '${gig.title}', ${gig.price}, '${gig.status}')">Edit</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteGig(${gig.id})">Delete</button>
-            </div>
             <div class="border-top pt-2" id="applications-${gig.id}">
               <div class="text-muted small">Loading applications...</div>
             </div>
           `;
+
           setTimeout(() => loadApplicationsForGig(gig.id, $(`#applications-${gig.id}`)), 0);
         }
+
 
 
         html += `</div></div></div>`;
@@ -350,13 +365,24 @@ function loadFavorites(userId) {
         `;
 
         if (currentUser && parseInt(currentUser.id) === parseInt(gig.user_id)) {
-          html += `
-            <div class="mt-2 mb-2">
-              <button class="btn btn-sm btn-warning me-2" onclick="openEditGigModal(${gig.id}, '${gig.title}', ${gig.price}, '${gig.status}')">Edit</button>
-              <button class="btn btn-sm btn-danger" onclick="deleteGig(${gig.id})">Delete</button>
-            </div>
-          `;
+          if (gig.is_locked) {
+            html += `
+              <div class="mt-2 mb-2">
+                <button class="btn btn-sm btn-warning me-2" disabled>Edit</button>
+                <button class="btn btn-sm btn-danger" disabled>Delete</button>
+                <div class="text-muted small">Locked: Freelancer approved but not yet paid</div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="mt-2 mb-2">
+                <button class="btn btn-sm btn-warning me-2" onclick="openEditGigModal(${gig.id}, '${gig.title}', ${gig.price}, '${gig.status}')">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteGig(${gig.id})">Delete</button>
+              </div>
+            `;
+          }
         }
+
 
         html += `</div></div></div>`;
         return html;
