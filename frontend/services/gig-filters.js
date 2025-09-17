@@ -53,7 +53,7 @@
   function loadCategories() {
     // Adjust if your route differs
     return $.ajax({
-      url: Utils.$get_base_url() + "/backend/categories",
+      url: Utils.get_base_url() + "/backend/categories",
       type: "GET",
       dataType: "json"
     }).then(function(categories){
