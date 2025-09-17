@@ -59,6 +59,9 @@ var Utils = {
       get_from_localstorage: function(key) {
         return JSON.parse(window.localStorage.getItem(key));
       },
+      get_base_url: function() {
+        return "https://clownfish-app-zo3vc.ondigitalocean.app";
+      }
       // logout: function() {
       //   window.localStorage.clear();
       //   window.location = "/login/index.html";
