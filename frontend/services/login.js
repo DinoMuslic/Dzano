@@ -1,3 +1,19 @@
+var Utils = {
+    set_to_localstorage: function(key, value) {
+        window.localStorage.setItem(key, JSON.stringify(value));
+      },
+      get_from_localstorage: function(key) {
+        return JSON.parse(window.localStorage.getItem(key));
+      },
+      get_base_url: function() {
+        return "https://clownfish-app-zo3vc.ondigitalocean.app";
+      }
+      // logout: function() {
+      //   window.localStorage.clear();
+      //   window.location = "/login/index.html";
+      // }
+    }
+
 
 $(document).ready(function() {
     $("#loginBtn").click(function() {
@@ -10,7 +26,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: get_base_url() + "/backend/auth/login", 
+            url: Utils.get_base_url() + "/backend/auth/login", 
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -35,7 +51,7 @@ $(document).ready(function() {
 
        $('#googleLoginBtn').on('click', function () {
       $.ajax({
-        url: get_base_url() + "/backend/google-login",
+        url: Utils.get_base_url() + "/backend/google-login",
         method: 'GET',
         success: function (response) {
           if (response.authUrl) {
@@ -50,20 +66,3 @@ $(document).ready(function() {
       });
     });
 });
-
-
-var Utils = {
-    set_to_localstorage: function(key, value) {
-        window.localStorage.setItem(key, JSON.stringify(value));
-      },
-      get_from_localstorage: function(key) {
-        return JSON.parse(window.localStorage.getItem(key));
-      },
-      get_base_url: function() {
-        return "https://clownfish-app-zo3vc.ondigitalocean.app";
-      }
-      // logout: function() {
-      //   window.localStorage.clear();
-      //   window.location = "/login/index.html";
-      // }
-    }

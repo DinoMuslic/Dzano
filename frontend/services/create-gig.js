@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Load categories
   $.ajax({
-    url: get_base_url() + "/backend/categories",
+    url: Utils.get_base_url() + "/backend/categories",
     type: 'GET',
     success: function (categories) {
       const categorySelect = $('#category');
@@ -32,7 +32,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-      url: get_base_url()  + "/backend/gigs/add",
+      url: Utils.get_base_url()  + "/backend/gigs/add",
       type: 'POST',
       data: formData,
       processData: false,

@@ -20,7 +20,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: get_base_url() + "/backend/auth/register", 
+            url: Utils.get_base_url() + "/backend/auth/register", 
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({

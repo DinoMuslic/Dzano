@@ -36,7 +36,7 @@
   function loadGigs() {
     const qs = buildQueryParams();
     $.ajax({
-      url: get_base_url() + `/backend/gigs${qs ? ("?" + qs) : ""}`,
+      url: Utils.get_base_url() + `/backend/gigs${qs ? ("?" + qs) : ""}`,
       type: "GET",
       dataType: "json",
       success: function(data) {
@@ -53,7 +53,7 @@
   function loadCategories() {
     // Adjust if your route differs
     return $.ajax({
-      url: get_base_url() + "/backend/categories",
+      url: Utils.get_base_url() + "/backend/categories",
       type: "GET",
       dataType: "json"
     }).then(function(categories){
