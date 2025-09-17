@@ -1,8 +1,8 @@
 // --- CONFIG: tolerate /BalkanFreelance vs /balkanfreelance (and switch automatically) ---
 (function () {
   const ORIGIN = window.location.origin;
-  const lowerRoot = "/clownfish-app-zo3vc.ondigitalocean.app";
-  const upperRoot = "/https://clownfish-app-zo3vc.ondigitalocean.app";
+  const lowerRoot = "";
+  const upperRoot = "";
   const pathname = window.location.pathname;
 
   const usesLower = pathname.toLowerCase().includes(lowerRoot + "/");
