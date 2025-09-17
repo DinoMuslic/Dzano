@@ -7,7 +7,7 @@ var Utils = {
       },
       logout: function() {
         $.ajax({
-          url: this.get_base_url +  "/backend/auth/logout",
+          url: this.get_base_url() +  "/backend/auth/logout",
           method: 'POST',
           success: function (response) {
             window.localStorage.clear();
