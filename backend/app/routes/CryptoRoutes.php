@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../services/CryptoService.php';
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . "/../Utils.php";
 
 Flight::set('crypto_service', new CryptoService());
 
@@ -27,7 +27,7 @@ Flight::route('POST /crypto/create-payment', function () {
     $data = Flight::request()->data->getData();
 
     Flight::json([
-        "payment_url" => BASE_URL . "/frontend/#fake-coinbase"
+        "payment_url" => Utils::get_base_url() . "/frontend/#fake-coinbase"
         ]);
 
 });

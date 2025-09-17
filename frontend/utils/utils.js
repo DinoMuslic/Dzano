@@ -7,7 +7,7 @@ var Utils = {
       },
       logout: function() {
         $.ajax({
-          url: 'http://localhost/BalkanFreelance/backend/auth/logout',
+          url: this.get_base_url +  "/backend/auth/logout",
           method: 'POST',
           success: function (response) {
             window.localStorage.clear();
@@ -17,5 +17,8 @@ var Utils = {
             alert("Something went wrong while logging out!");
           }
         });
+      },
+      get_base_url: function() {
+        return "https://clownfish-app-zo3vc.ondigitalocean.app";
       }
 }

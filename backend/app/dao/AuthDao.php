@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . "/../Utils.php";
 
 Class AuthDao{
 private $conn;
@@ -8,11 +8,11 @@ public function __construct()
 {
 try {
   
-  $servername = DB_HOST;
-    $username = DB_USER;
-    $password = DB_PASSWORD;
-    $schema = DB_NAME;
-    $port = DB_PORT;
+  $servername = Utils::get_env("DB_HOST", "balkanbaza");
+    $username = Utils::get_env("DB_USER", "root");
+    $password = Utils::get_env("DB_PASSWORD", "?Password123");
+    $schema = Utils::get_env("DB_NAME", "balkanbaza");
+    $port = Utils::get_env("DB_PORT", "balkanbaza");
 
   
   $this->conn = new PDO(

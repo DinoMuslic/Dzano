@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . "/../Utils.php";
 
 class UserDao{
 
@@ -10,11 +10,11 @@ class UserDao{
   {
     try {
       
-      $servername = DB_HOST;
-        $username = DB_USER;
-        $password = DB_PASSWORD;
-        $schema = DB_NAME;
-        $port = DB_PORT;
+      $servername = Utils::get_env("DB_HOST", "balkanbaza");
+    $username = Utils::get_env("DB_USER", "root");
+    $password = Utils::get_env("DB_PASSWORD", "?Password123");
+    $schema = Utils::get_env("DB_NAME", "balkanbaza");
+    $port = Utils::get_env("DB_PORT", "balkanbaza");
 
       
       $this->conn = new PDO(
@@ -221,7 +221,6 @@ class UserDao{
         $data = $entity; // $data = $entity->getData();
 
 
-        // Only keep allowed fields for BalkanFreelance
         $allowedFields = [
           'first_name', 'last_name', 'email', 'password',
           'country_id', 'profile_image', 'bio', 'balance', 'isAdmin',

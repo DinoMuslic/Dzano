@@ -5,6 +5,7 @@ require_once __DIR__ . '/../services/UserService.php';
 
 // Ensure Google API Client autoload is included
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../Utils.php';
 
 
 Flight::set("user_service",new UserService());
@@ -344,7 +345,7 @@ Flight::route('GET /google-callback', function () {
         'exp' => time() + 3600
     ];
 
-    $jwt = \Firebase\JWT\JWT::encode($jwtPayload, JWT_SECRET, 'HS256');
+    $jwt = \Firebase\JWT\JWT::encode($jwtPayload, Utils::get_env("JWT_SECRET", ""), 'HS256');
 
     setcookie("id", $jwtPayload["user"]["id"], time() + 3600, "/");
     setcookie("email", $jwtPayload["user"]["email"], time() + 3600, "/");
@@ -354,7 +355,7 @@ Flight::route('GET /google-callback', function () {
     setcookie("jwt", $jwt, time() + 3600, "/");
 
     // Redirect with token
-    $baseFrontendUrl = "http://localhost/BalkanFreelance/frontend/#home";
+    $baseFrontendUrl = Utils::get_base_url() .  "/frontend/#home";
     Flight::redirect($baseFrontendUrl);
 });
 
@@ -390,7 +391,7 @@ Flight::route('POST /top-up', function () {
 
     $jwt = $matches[1];
     try {
-        $decoded = \Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key(JWT_SECRET, 'HS256'));
+        $decoded = \Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key(Utils::get_env("JWT_SECRET", ""), 'HS256'));
         $userId = $decoded->user->id;
 
         $userService = Flight::get("user_service");

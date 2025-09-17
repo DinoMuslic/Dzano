@@ -20,7 +20,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: 'http://localhost/BalkanFreelance/backend/auth/register', 
+            url: get_base_url() + "/backend/auth/register", 
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({

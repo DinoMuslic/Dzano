@@ -6,7 +6,7 @@ $(document).ready(function () {
 
 function loadBlogPosts() {
   $.ajax({
-    url: "http://localhost/BalkanFreelance/backend/blogs", // Adjust if needed
+    url: get_base_url() + "/backend/blogs", // Adjust if needed
     method: "GET",
     dataType: "json",
     success: function (blogs) {
@@ -60,7 +60,7 @@ function getImageUrl(url) {
   }
 
   // Otherwise treat as relative and append the uploads folder path
-  return "http://localhost/BalkanFreelance/uploads/" + url;
+  return get_base_url() +  "/uploads/" + url;
 }
 
 // put this near your other functions

@@ -2,7 +2,7 @@ function renderGigs(gigs) {
   const $gigsContainer = $(".gigsContainer");
   $gigsContainer.empty();
 
-  const BASE_URL = "http://localhost/BalkanFreelance";
+  const BASE_URL = get_base_url();
 
   $.each(gigs, function(index, gig) {
     const $col = $("<div class='col-md-3 mb-4 d-flex justify-content-center'></div>");

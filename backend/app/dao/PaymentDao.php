@@ -1,19 +1,35 @@
 <?php
 
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . "/../Utils.php";
 
 class PaymentDao {
 
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+  {
+    try {
+      
+      $servername = Utils::get_env("DB_HOST", "balkanbaza");
+    $username = Utils::get_env("DB_USER", "root");
+    $password = Utils::get_env("DB_PASSWORD", "?Password123");
+    $schema = Utils::get_env("DB_NAME", "balkanbaza");
+    $port = Utils::get_env("DB_PORT", "balkanbaza");
+
+
         $this->conn = new PDO(
-            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";port=" . DB_PORT,
-            DB_USER,
-            DB_PASSWORD
+            "mysql:host=$servername;dbname=$schema;port=$port",
+            $username,
+            $password
         );
+        
         $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
+        
+         // echo "Connected successfully";
+        } catch (PDOException $e) {
+          echo "Connection failed: " . $e->getMessage();
+        }
+        }
 
     public function recordPayPalPayment($data) {
         $sql = "INSERT INTO transactions (sender_id, receiver_id, gig_id, amount, status, transaction_date, method)

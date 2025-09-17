@@ -3,6 +3,8 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+require_once __DIR__ . "/../Utils.php";
+
 Flight::route('/*', function () {
     $public_routes = [
         '/auth/register',
@@ -36,7 +38,7 @@ Flight::route('/*', function () {
         $jwt = $matches[1];
 
         // Decode token
-        $decoded = JWT::decode($jwt, new Key(JWT_SECRET, 'HS256'));
+        $decoded = JWT::decode($jwt, new Key(Utils::get_env("JWT_SECRET", ""), 'HS256'));
 
         // Save user to Flight globals
         Flight::set('user', (array)$decoded->user);

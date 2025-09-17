@@ -10,7 +10,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: "https://clownfish-app-zo3vc.ondigitalocean.app/backend/auth/login", 
+            url: get_base_url() + "/backend/auth/login", 
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({
@@ -35,7 +35,7 @@ $(document).ready(function() {
 
        $('#googleLoginBtn').on('click', function () {
       $.ajax({
-        url: 'http://localhost/BalkanFreelance/backend/google-login',
+        url: get_base_url() + "/backend/google-login",
         method: 'GET',
         success: function (response) {
           if (response.authUrl) {

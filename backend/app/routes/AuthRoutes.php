@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../services/AuthService.php';
 require_once __DIR__ . '/../Utils.php';
-require_once __DIR__ . '/../../config/config.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -55,7 +54,7 @@ Flight::route('POST /auth/login', function() {
 
     $token = JWT::encode(
         $jwt_payload,
-        JWT_SECRET,
+        Utils::get_env("JWT_SECRET", "supersecret"),
         'HS256'
     );
 

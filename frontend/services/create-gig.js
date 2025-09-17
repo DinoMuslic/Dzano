@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Load categories
   $.ajax({
-    url: 'http://localhost/BalkanFreelance/backend/categories',
+    url: get_base_url() + "/backend/categories",
     type: 'GET',
     success: function (categories) {
       const categorySelect = $('#category');
@@ -32,7 +32,7 @@ $(document).ready(function () {
     }
 
     $.ajax({
-      url: 'http://localhost/BalkanFreelance/backend/gigs/add',
+      url: get_base_url()  + "/backend/gigs/add",
       type: 'POST',
       data: formData,
       processData: false,

@@ -1,7 +1,9 @@
 <?php
 
+use Monolog\Handler\Curl\Util;
+
 require_once __DIR__ . '/../services/PaymentService.php';
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . "/../Utils.php";
 
 
 
@@ -41,7 +43,7 @@ Flight::route('POST /paypal/payment-success', function () {
 
 Flight::route('GET /config/paypal', function () {
     Flight::json([
-        "clientId" => PAYPAL_CLIENT_ID
+        "clientId" => Utils::get_env("PAYPAL_CLIENT_ID", "")
     ]);
 });
 
@@ -52,7 +54,7 @@ Flight::route('POST /paypal/create-order', function () {
     // 1. Uzmemo access token
     $ch = curl_init("https://api-m.sandbox.paypal.com/v1/oauth2/token");
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Accept: application/json", "Accept-Language: en_US"]);
-    curl_setopt($ch, CURLOPT_USERPWD, PAYPAL_CLIENT_ID . ":" . PAYPAL_CLIENT_SECRET);
+    curl_setopt($ch, CURLOPT_USERPWD, Utils::get_env("PAYPAL_CLIENT_ID", "") . ":" . Utils::get_env("PAYPAL_CLIENT_SECRET", ""));
     curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $auth = json_decode(curl_exec($ch), true);
@@ -89,7 +91,7 @@ Flight::route('POST /paypal/capture-order/@id', function($id) {
     // 1. access token
     $ch = curl_init("https://api-m.sandbox.paypal.com/v1/oauth2/token");
     curl_setopt($ch, CURLOPT_HTTPHEADER, ["Accept: application/json", "Accept-Language: en_US"]);
-    curl_setopt($ch, CURLOPT_USERPWD, PAYPAL_CLIENT_ID . ":" . PAYPAL_CLIENT_SECRET);
+    curl_setopt($ch, CURLOPT_USERPWD, Utils::get_env("PAYPAL_CLIENT_ID", "") . ":" . Utils::get_env("PAYPAL_CLIENT_SECRET",""));
     curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $auth = json_decode(curl_exec($ch), true);

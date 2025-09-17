@@ -46,9 +46,9 @@ class Utils{
 
     public static function getGoogleClient() {
         $client = new Client();
-        $client->setClientId(GOOGLE_CLIENT_ID);
-        $client->setClientSecret(GOOGLE_CLIENT_SECRET);
-        $client->setRedirectUri(GOOGLE_REDIRECT_URI);
+        $client->setClientId(Utils::get_env("GOOGLE_CLIENT_ID", ""));
+        $client->setClientSecret(Utils::get_env("GOOGLE_CLIENT_SECRET", ""));
+        $client->setRedirectUri(Utils::get_env("GOOGLE_REDIRECT_URI", ""));
         $client->addScope('email');
         $client->addScope('profile');
         $client->setHttpClient(new \GuzzleHttp\Client([
@@ -129,5 +129,13 @@ class Utils{
         echo $e->getMessage();
         }
 
+    }
+
+    public static function get_base_url() {
+        return "https://clownfish-app-zo3vc.ondigitalocean.app";
+    }
+
+     public static function get_env($name, $default) {
+        return isset($_ENV[$name]) && trim($_ENV[$name]) != "" ? $_ENV[$name] : $default;
     }
 }

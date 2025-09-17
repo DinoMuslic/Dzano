@@ -1,6 +1,6 @@
 if (typeof SingleGig === 'undefined') {
   const SingleGig = (function () {
-    const BASE_URL = "http://localhost/BalkanFreelance";
+    const BASE_URL = get_base_url();
 
     function isSingleGigRoute(hash) {
       return hash === "#single-gig" || /^#single-gig(\/|\?)/i.test(hash || "");
