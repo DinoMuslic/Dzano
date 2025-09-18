@@ -717,10 +717,14 @@ $('#reviewForm').on('submit', function (e) {
     success: function () {
       toastr.success("Review submitted!");
       $('#ratingModal').modal('hide');
+      console.log("success review");
+      setTimeout(() => {}, 5000);
       // location.reload();
     },
     error: function (xhr) {
       toastr.error("Failed to submit review: " + (xhr.responseJSON?.error || "Unknown error"));
+      console.log("failed review");
+      setTimeout(() => {}, 5000);
     }
   });
 });
