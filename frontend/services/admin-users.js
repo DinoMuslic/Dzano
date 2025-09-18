@@ -1,3 +1,5 @@
+ const API_BASE = Utils.get_base_url();
+ 
 function initAdminUsers() {
   console.log("DataTables loaded?", typeof $.fn.dataTable);
   console.log("DataTables available in admin-users.js?", typeof $.fn.dataTable);

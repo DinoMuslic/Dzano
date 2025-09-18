@@ -1,3 +1,5 @@
+ const API_BASE = Utils.get_base_url();
+
 function initAdminGigs() {
   console.log("🟢 initAdminGigs triggered");
 
