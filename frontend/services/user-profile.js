@@ -1,6 +1,6 @@
 function loadUserProfile(userId) {
   $.ajax({
-    url: `${API_BASE}/user-profile/${userId}`,
+    url: `${API_BASE}/backend/user-profile/${userId}`,
     method: "GET",
     dataType: "json",
     success: function (res) {
@@ -33,7 +33,7 @@ function loadUserProfile(userId) {
 
       // ✅ Fetch and display user rating summary safely
       $.ajax({
-        url: `${API_BASE}/reviews/summary/${user.id}`,
+        url: `${API_BASE}/backend/reviews/summary/${user.id}`,
         method: "GET",
         success: function (summary) {
           const avg = summary && summary.average_rating ? parseFloat(summary.average_rating) : null;
@@ -125,7 +125,7 @@ function enableBioEdit(currentBio, userId) {
 function saveBio(userId) {
   const newBio = $("#bio-input").val();
   $.ajax({
-    url: `${API_BASE}/users/${userId}/bio`,
+    url: `${API_BASE}/backend/users/${userId}/bio`,
     type: "PUT",
     contentType: "application/json",
     data: JSON.stringify({ bio: newBio }),
@@ -155,7 +155,7 @@ function submitEditGig() {
   const status = $("#edit-gig-status").val();
 
   $.ajax({
-    url: `${API_BASE}/gigs/${id}`,
+    url: `${API_BASE}/backend/gigs/${id}`,
     type: "PUT",
     contentType: "application/json",
     data: JSON.stringify({ title, price, status }),
@@ -173,7 +173,7 @@ function deleteGig(id) {
   if (!confirm("Are you sure you want to delete this gig?")) return;
 
   $.ajax({
-    url: `${API_BASE}/gigs/delete/${id}`,
+    url: `${API_BASE}/backend/gigs/delete/${id}`,
     type: "DELETE",
     success: function () {
       toastr.success("Gig deleted successfully");
@@ -187,7 +187,7 @@ function deleteGig(id) {
 
 function loadUserBalance(userId) {
   $.ajax({
-    url: `${API_BASE}/user/${userId}/balance`,
+    url: `${API_BASE}/backend/user/${userId}/balance`,
     method: "GET",
     success: function (res) {
       $("#userBalance").text(parseFloat(res.balance).toFixed(2));
@@ -202,7 +202,7 @@ function loadUserBalance(userId) {
 function loadApplicationsForGig(gigId, container) {
   const token = localStorage.getItem("jwt")?.replace(/"/g, "");
   $.ajax({
-    url: `${API_BASE}/gigs/${gigId}/applications`,
+    url: `${API_BASE}/backend/gigs/${gigId}/applications`,
     type: "GET",
     headers: { Authorization: "Bearer " + token },
     success: function (applications) {
@@ -214,7 +214,7 @@ function loadApplicationsForGig(gigId, container) {
       // Fetch rating summaries for all applicants in parallel
       const ratingRequests = applications.map(app => {
         return $.ajax({
-          url: `${API_BASE}/reviews/summary/${app.user_id}`,
+          url: `${API_BASE}/backend/reviews/summary/${app.user_id}`,
           method: "GET"
         }).then(summary => ({
           userId: app.user_id,
@@ -296,7 +296,7 @@ $(document).on('click', '.application-entry', function (e) {
 function approveApplicant(gigId, userId) {
   const token = localStorage.getItem("jwt")?.replace(/"/g, "");
   $.ajax({
-    url: `${API_BASE}/gigs/${gigId}/approve/${userId}`,
+    url: `${API_BASE}/backend/gigs/${gigId}/approve/${userId}`,
     type: "POST",
     headers: { Authorization: "Bearer " + token },
     success: function () {
@@ -310,7 +310,7 @@ function approveApplicant(gigId, userId) {
 }
 
 let selectedGigId = null;
-let selectedUserId = null;
+// let selectedUserId = null;
 let selectedPrice = null;
 
 function promptReview(gigId, reviewedUserId) {
@@ -325,7 +325,7 @@ function payFreelancer(gigId, userId) {
   selectedUserId = userId;
 
   $.ajax({
-    url: `${API_BASE}/gigs/${gigId}`,
+    url: `${API_BASE}/backend/gigs/${gigId}`,
     method: "GET",
     dataType: "json",
     success: function (gig) {
@@ -339,7 +339,7 @@ function payFreelancer(gigId, userId) {
         const currentUser = JSON.parse(localStorage.getItem("user"));
 
         $.ajax({
-          url: `${API_BASE}/gigs/${gigId}/pay/${userId}`,
+          url: `${API_BASE}/backend/gigs/${gigId}/pay/${userId}`,
           type: "POST",
           headers: { Authorization: "Bearer " + token },
           contentType: "application/json",
@@ -386,7 +386,7 @@ function enablePhoneEdit(currentPhone, userId) {
 function savePhone(userId) {
   const newPhone = $("#phone-input").val();
   $.ajax({
-    url: `${API_BASE}/users/${userId}/phone`,
+    url: `${API_BASE}/backend/users/${userId}/phone`,
     type: "PUT",
     contentType: "application/json",
     data: JSON.stringify({ phone_number: newPhone }),
@@ -413,7 +413,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
 const token = localStorage.getItem("jwt")?.replace(/"/g, "");
 function loadFavorites(userId) {
   $.ajax({
-    url: `${API_BASE}/favorites/${userId}`,
+    url: `${API_BASE}/backend/favorites/${userId}`,
     method: "GET",
     dataType: "json",
     success: function (favorites) {
@@ -474,7 +474,7 @@ function removeFavorite(userId, gigId) {
   if (!confirm("Remove this gig from favorites?")) return;
 
   $.ajax({
-    url: `${API_BASE}/favorites/delete/${currentUser.id}/${gigId}`,
+    url: `${API_BASE}/backend/favorites/delete/${currentUser.id}/${gigId}`,
     type: "DELETE",
     headers: { Authorization: "Bearer " + token },
     success: function () {
@@ -530,7 +530,7 @@ function renderPayPalButton() {
   paypal.Buttons({
     createOrder: function (data, actions) {
 
-      return fetch(`${API_BASE}/paypal/create-order`, {
+      return fetch(`${API_BASE}/backend/paypal/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: selectedPrice.toFixed(2) })
@@ -544,7 +544,7 @@ function renderPayPalButton() {
     console.log("Order approved:", data);
 
 
-    return fetch(`${API_BASE}/paypal/capture-order/${data.orderID}`, {
+    return fetch(`${API_BASE}/backend/paypal/capture-order/${data.orderID}`, {
       method: "POST"
     })
     .then(res => res.json())
@@ -556,7 +556,7 @@ function renderPayPalButton() {
 
  
       $.ajax({
-        url: `${API_BASE}/paypal/payment-success`,
+        url: `${API_BASE}/backend/paypal/payment-success`,
         type: "POST",
         contentType: "application/json",
         data: JSON.stringify({
@@ -594,7 +594,7 @@ function loadPayPalSdk(callback) {
   }
 
   $.ajax({
-    url: `${API_BASE}/config/paypal`,
+    url: `${API_BASE}/backend/config/paypal`,
     method: "GET",
     success: function (res) {
       const script = document.createElement("script");
@@ -612,7 +612,7 @@ function loadPayPalSdk(callback) {
 function rejectApplicant(gigId, userId) {
   const token = localStorage.getItem("jwt")?.replace(/"/g, "");
   $.ajax({
-    url: `${API_BASE}/gigs/${gigId}/reject/${userId}`,
+    url: `${API_BASE}/backend/gigs/${gigId}/reject/${userId}`,
     type: "POST",
     headers: { Authorization: "Bearer " + token },
     success: function () {
@@ -628,7 +628,7 @@ function rejectApplicant(gigId, userId) {
 
 function simulateCryptoWebhook(paymentData) {
   $.ajax({
-    url: `${API_BASE}/crypto/webhook`,
+    url: `${API_BASE}/backend/crypto/webhook`,
     method: "POST",
     contentType: "application/json",
     headers: {
@@ -674,7 +674,7 @@ function handleCryptoPayment() {
   };
 
   $.ajax({
-    url: `${API_BASE}/crypto/create-payment`,
+    url: `${API_BASE}/backend/crypto/create-payment`,
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify(paymentData),
@@ -709,7 +709,7 @@ $('#reviewForm').on('submit', function (e) {
   };
 
   $.ajax({
-    url: `${API_BASE}/reviews`,
+    url: `${API_BASE}/backend/reviews`,
     method: "POST",
     contentType: "application/json",
     headers: { Authorization: `Bearer ${token}` },

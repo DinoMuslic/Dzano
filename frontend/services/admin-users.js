@@ -4,7 +4,7 @@ function initAdminUsers() {
 
   let usersTable = $('#usersTable').DataTable({
     ajax: {
-      url: `${API_BASE}/users/`,
+      url: `${API_BASE}/backend/users/`,
       dataSrc: '',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -69,7 +69,7 @@ function initAdminUsers() {
     };
 
     $.ajax({
-      url: `${API_BASE}/users/update`,
+      url: `${API_BASE}/backend/users/update`,
       method: 'POST',
       data: updatedUser,
       beforeSend: function (xhr) {
@@ -98,7 +98,7 @@ function initAdminUsers() {
   // Confirm delete
   $('#confirmDeleteBtn').click(function () {
     $.ajax({
-      url: `${API_BASE}/users/delete/${selectedUserId}`,
+      url: `${API_BASE}/backend/users/delete/${selectedUserId}`,
       type: 'DELETE',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -143,7 +143,7 @@ function initAdminUsers() {
     }
 
     $.ajax({
-      url: `${API_BASE}/users/add`,
+      url: `${API_BASE}/backend/users/add`,
       method: 'POST',
       data: newUser,
       beforeSend: function (xhr) {

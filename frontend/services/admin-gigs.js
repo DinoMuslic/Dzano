@@ -3,7 +3,7 @@ function initAdminGigs() {
 
   const gigsTable = $('#gigsTable').DataTable({
     ajax: {
-      url: `${API_BASE}/gigs`,
+      url: `${API_BASE}/backend/gigs`,
       dataSrc: '',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -59,7 +59,7 @@ function initAdminGigs() {
     };
 
     $.ajax({
-      url: `${API_BASE}/gigs/update`,
+      url: `${API_BASE}/backend/gigs/update`,
       method: 'POST',
       data: updatedGig,
       beforeSend: function (xhr) {
@@ -87,7 +87,7 @@ function initAdminGigs() {
 
   $('#confirmGigDeleteBtn').click(function () {
     $.ajax({
-      url: `${API_BASE}/gigs/delete/${selectedGigId}`,
+      url: `${API_BASE}/backend/gigs/delete/${selectedGigId}`,
       type: 'DELETE',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -129,7 +129,7 @@ function initAdminGigs() {
     }
 
     $.ajax({
-      url: `${API_BASE}/gigs/add`,
+      url: `${API_BASE}/backend/gigs/add`,
       method: 'POST',
       data: newGig,
       beforeSend: function (xhr) {

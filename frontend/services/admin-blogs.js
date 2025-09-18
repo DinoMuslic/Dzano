@@ -1,7 +1,7 @@
 function initAdminBlogs() {
   const blogsTable = $('#blogsTable').DataTable({
     ajax: {
-      url: `${API_BASE}/blogs`,
+      url: `${API_BASE}/backend/blogs`,
       dataSrc: '',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -54,7 +54,7 @@ function initAdminBlogs() {
     }
 
     $.ajax({
-      url: `${API_BASE}/blogs/update`,
+      url: `${API_BASE}/backend/blogs/update`,
       method: "POST",
       data: formData,
       processData: false,
@@ -84,7 +84,7 @@ function initAdminBlogs() {
 
   $('#confirmBlogDeleteBtn').click(function () {
     $.ajax({
-      url: `${API_BASE}/blogs/delete/${selectedBlogId}`,
+      url: `${API_BASE}/backend/blogs/delete/${selectedBlogId}`,
       type: 'DELETE',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -121,7 +121,7 @@ function initAdminBlogs() {
     }
 
     $.ajax({
-      url: `${API_BASE}/blogs/add`,
+      url: `${API_BASE}/backend/blogs/add`,
       method: "POST",
       data: formData,
       processData: false,

@@ -50,7 +50,7 @@ $(document).ready(function () {
 
     // ✅ Simulate top-up request
     $.ajax({
-      url: `${API_BASE}/top-up`,
+      url: `${API_BASE}/backend/top-up`,
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ amount: amount }),
@@ -70,7 +70,7 @@ $(document).ready(function () {
 // 🔄 Load balance into Wallet view
 function loadWalletBalance(userId) {
   $.ajax({
-    url: `${API_BASE}/user/${userId}/balance`,
+    url: `${API_BASE}/backend/user/${userId}/balance`,
     method: 'GET',
     success: function (res) {
       $('#walletBalance').text(parseFloat(res.balance).toFixed(2));

@@ -19,6 +19,6 @@ var Utils = {
         });
       },
       get_base_url: function() {
-        return "https://clownfish-app-zo3vc.ondigitalocean.app/backend";
+        return "https://clownfish-app-zo3vc.ondigitalocean.app";
       }
 }

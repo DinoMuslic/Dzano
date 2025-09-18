@@ -1,7 +1,7 @@
 function initAdminCategories() {
   const categoriesTable = $('#categoriesTable').DataTable({
     ajax: {
-      url: `${API_BASE}/categories`,
+      url: `${API_BASE}/backend/categories`,
       dataSrc: '',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -43,7 +43,7 @@ function initAdminCategories() {
     };
 
     $.ajax({
-      url: `${API_BASE}/categories/update`,
+      url: `${API_BASE}/backend/categories/update`,
       method: 'POST',
       data: updated,
       beforeSend: function (xhr) {
@@ -71,7 +71,7 @@ function initAdminCategories() {
 
   $('#confirmCategoryDeleteBtn').click(function () {
     $.ajax({
-      url: `${API_BASE}/categories/delete/${selectedCategoryId}`,
+      url: `${API_BASE}/backend/categories/delete/${selectedCategoryId}`,
       type: 'DELETE',
       beforeSend: function (xhr) {
         const user = Utils.get_from_localstorage("user");
@@ -106,7 +106,7 @@ function initAdminCategories() {
     }
 
     $.ajax({
-      url: `${API_BASE}/categories/add`,
+      url: `${API_BASE}/backend/categories/add`,
       method: 'POST',
       data: newCategory,
       beforeSend: function (xhr) {
