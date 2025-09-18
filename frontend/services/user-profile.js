@@ -1,7 +1,3 @@
-const API_BASE = Utils.get_base_url();
-
-console.log(API_BASE);
-
 function loadUserProfile(userId) {
   $.ajax({
     url: `${API_BASE}/user-profile/${userId}`,
