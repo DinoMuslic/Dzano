@@ -16,7 +16,7 @@ Flight::route('/*', function () {
         '/paypal/create-order',
         '/config/paypal',
         '/paypal/payment-success',
-        '/users/'
+        '/favorites/'
     ];
 
     $current_route = Flight::request()->url;
