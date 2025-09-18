@@ -45,8 +45,13 @@ $(document).ready(function () {
   });
 
   app.route({
-    view: 'single-gig',
-    load: 'single-gig.html'
+    view: "single-gig",
+    load: "single-gig.html",
+    onEnter: function () {
+      if (window.SingleGig && typeof SingleGig.render === "function") {
+        SingleGig.render(); // guaranteed container exists now
+      }
+    }
   });
 
   app.route({
