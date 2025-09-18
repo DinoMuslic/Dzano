@@ -25,4 +25,16 @@ class PaymentService {
         // Mark the application as paid
         $this->paymentDao->markApplicationAsPaid($data['gig_id'], $data['receiver_id']);
     }
+
+    public function handleCryptoPayment($data) {
+        $this->paymentDao->recordCryptoPayment([
+            'sender_id' => $data['sender_id'],
+            'receiver_id' => $data['receiver_id'],
+            'gig_id' => $data['gig_id'],
+            'amount' => $data['amount']
+        ]);
+
+        $this->paymentDao->markApplicationAsPaid($data['gig_id'], $data['receiver_id']);
+    }
 }
+

@@ -113,3 +113,15 @@ Flight::route('POST /paypal/capture-order/@id', function($id) {
 
     Flight::json($response);
 });
+
+Flight::route('POST /crypto/payment-success', function () {
+    $data = Flight::request()->data->getData();
+
+    if (!isset($data['sender_id'], $data['receiver_id'], $data['gig_id'], $data['amount'])) {
+        Flight::json(['error' => 'Missing required fields'], 400);
+        return;
+    }
+
+    Flight::get('payment_service')->handleCryptoPayment($data);
+    Flight::json(['success' => true, 'message' => 'Crypto payment recorded successfully']);
+});

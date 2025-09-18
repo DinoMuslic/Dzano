@@ -359,7 +359,7 @@ function payFreelancer(gigId, userId) {
       });
 
       $('#cryptoPayBtn').off('click').on('click', function () {
-        handleCryptoPayment();
+        handleCryptoPaymentSimulated();
       });
 
       loadPayPalSdk(() => {
@@ -730,3 +730,48 @@ $(document).on('submit', '#reviewForm', function (e) {
     }
   });
 });
+
+async function handleCryptoPaymentSimulated() {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+
+  const paymentData = {
+    amount: selectedPrice,
+    gig_id: selectedGigId,
+    sender_id: currentUser.id,
+    receiver_id: selectedUserId
+  };
+
+  if (typeof window.ethereum === 'undefined') {
+    toastr.error("MetaMask not found. Please install MetaMask.");
+    return;
+  }
+
+  const web3 = new Web3(window.ethereum);
+
+  try {
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+    toastr.info("Simulating crypto payment...");
+    setTimeout(() => {
+      $.ajax({
+        url: `${API_BASE}/crypto/payment-success`,
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(paymentData),
+        success: function () {
+          toastr.success("Crypto payment simulated!");
+          const modal = bootstrap.Modal.getInstance(document.getElementById('payModal'));
+          modal.hide();
+          promptReview(paymentData.gig_id, paymentData.receiver_id);
+        },
+        error: function () {
+          toastr.error("Failed to record crypto payment.");
+        }
+      });
+    }, 1500);
+
+  } catch (err) {
+    console.error("MetaMask Error:", err);
+    toastr.error("MetaMask simulation failed or was cancelled.");
+  }
+}
