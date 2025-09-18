@@ -717,7 +717,7 @@ $('#reviewForm').on('submit', function (e) {
     success: function () {
       toastr.success("Review submitted!");
       $('#ratingModal').modal('hide');
-      location.reload();
+      // location.reload();
     },
     error: function (xhr) {
       toastr.error("Failed to submit review: " + (xhr.responseJSON?.error || "Unknown error"));
