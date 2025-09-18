@@ -695,7 +695,7 @@ function handleCryptoPayment() {
 }
 
 
-$('#reviewForm').on('submit', function (e) {
+$(document).on('submit', '#reviewForm', function (e) {
   e.preventDefault();
   const token = localStorage.getItem("jwt")?.replace(/"/g, "");
   const currentUser = JSON.parse(localStorage.getItem("user"));
