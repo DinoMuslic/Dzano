@@ -311,7 +311,7 @@ function approveApplicant(gigId, userId) {
 
 let selectedGigId = null;
 // let selectedUserId = null;
-let selectedPrice = null;
+// let selectedPrice = null;
 
 function promptReview(gigId, reviewedUserId) {
   $('#reviewGigId').val(gigId);
