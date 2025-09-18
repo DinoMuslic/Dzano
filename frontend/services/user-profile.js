@@ -754,7 +754,7 @@ async function handleCryptoPaymentSimulated() {
     toastr.info("Simulating crypto payment...");
     setTimeout(() => {
       $.ajax({
-        url: `${API_BASE}/crypto/payment-success`,
+        url: `${API_BASE}/backend/crypto/payment-success`,
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(paymentData),
