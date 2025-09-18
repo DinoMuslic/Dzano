@@ -309,7 +309,7 @@ function approveApplicant(gigId, userId) {
   });
 }
 
-let selectedGigId = null;
+// let selectedGigId = null;
 // let selectedUserId = null;
 // let selectedPrice = null;
 
