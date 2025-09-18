@@ -39,7 +39,7 @@ function initAdminUsers() {
 
   const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
   const deleteModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
-  let selectedUserId = null;
+  // let selectedUserId = null;
 
   // Edit button
   $('#usersTable tbody').on('click', '.editUserBtn', function () {
