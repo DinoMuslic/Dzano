@@ -25,16 +25,53 @@ body{
 }
 
 
-.gig-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  width: 18rem; /* replaces inline style */
+/* Ensure all gig cards are same height */
+.gigsContainer .gig-card {
+  height: 100%;
+  min-height: 400px; /* or adjust this value as you prefer */
+  display: flex;
+  flex-direction: column;
 }
+
+/* Make card body fill the space so footer stays at bottom */
+.gig-card .card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Footer fixed at bottom with better spacing */
+.gig-card .card-footer {
+  margin-top: auto;
+  padding-top: 0;
+  padding-left: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-right: 0.75rem;
+  background-color: transparent;
+  border-top: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.gig-card .card-footer p {
+  margin-bottom: 2rem; /* more space above the button */
+}
+
+
+.gig-card .btn {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
+
 
 .gig-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
+} 
+
 
 
 /* Fix toastr background and text colors being overridden by Bootstrap 5 */
