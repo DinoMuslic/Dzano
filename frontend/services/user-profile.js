@@ -749,12 +749,20 @@ async function handleCryptoPaymentSimulated() {
   const web3 = new Web3(window.ethereum);
 
   try {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    // Always request accounts first
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const from = accounts[0];
+
+    // 🔹 Force MetaMask confirmation every time with personal_sign
+    await window.ethereum.request({
+      method: 'personal_sign',
+      params: ["Confirm payment simulation for BalkanFreelance", from]
+    });
 
     toastr.info("Simulating crypto payment...");
     setTimeout(() => {
       $.ajax({
-        url: `${API_BASE}/backend/crypto/payment-success`,
+        url: `${API_BASE}/crypto/payment-success`,
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(paymentData),
@@ -772,6 +780,6 @@ async function handleCryptoPaymentSimulated() {
 
   } catch (err) {
     console.error("MetaMask Error:", err);
-    toastr.error("MetaMask simulation failed or was cancelled.");
+    toastr.error("MetaMask confirmation was cancelled.");
   }
 }
